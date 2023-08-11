@@ -1,29 +1,41 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { LogService } from '../log/log.service';
 import { CreateTaskDto, FindAllDto, Task } from './dto';
 import { GatewayService } from './gateway.service';
 
 @Controller()
 export class GatewayController {
-  constructor(private readonly gatewayService: GatewayService) {}
+  constructor(
+    private readonly gatewayService: GatewayService,
+    private readonly logService: LogService,
+  ) {}
 
   @GrpcMethod('create')
-  createTask(data: CreateTaskDto, metadata: any): Promise<Task> {
-    return this.gatewayService.createTask(data);
+  async createTask(data: CreateTaskDto, metadata: any): Promise<Task> {
+    const result = await this.gatewayService.createTask(data);
+    await this.logService.createTaskEvent(data);
+    return result;
   }
 
   @GrpcMethod('findOne')
-  findOneTask(id: number, metadata: any): Promise<Task> {
-    return this.gatewayService.findOneTask(id);
+  async findOneTask(id: number, metadata: any): Promise<Task> {
+    const result = await this.gatewayService.findOneTask(id);
+    await this.logService.findOneTaskEvent(id);
+    return result;
   }
 
   @GrpcMethod('findAll')
-  findAllTasks(data: FindAllDto, metadata: any): Promise<Task[]> {
-    return this.gatewayService.findAllTasks(data);
+  async findAllTasks(data: FindAllDto, metadata: any): Promise<Task[]> {
+    const result = await this.gatewayService.findAllTasks(data);
+    await this.logService.findAllTasksEvent(data);
+    return result;
   }
 
   @GrpcMethod('delete')
-  deleteTask(id: number, metadata: any): Promise<boolean> {
-    return this.gatewayService.deleteTask(id);
+  async deleteTask(id: number, metadata: any): Promise<boolean> {
+    const result = await this.gatewayService.deleteTask(id);
+    await this.logService.deleteTaskEvent(id);
+    return result;
   }
 }
