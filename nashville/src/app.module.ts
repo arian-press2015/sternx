@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { WebsocketModule } from './websocket/websocket.module';
+import { GrpcClientModule } from './grpc-client/grpc-client.module';
 @Module({
-  imports: [WebsocketModule],
+  imports: [GrpcClientModule],
   controllers: [],
   providers: [],
 })
