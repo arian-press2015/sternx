@@ -6,6 +6,6 @@ export const grpcClientOptions: ClientOptions = {
   options: {
     package: 'task',
     protoPath: join(__dirname, 'task/task.proto'),
-    url: 'localhost:3030',
+    url: 'gallatin:3030',
   },
 };

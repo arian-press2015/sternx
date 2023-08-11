@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  nashville:
+    build: ./nashville
+    ports:
+      - 3000:3000
+    networks:
+      - ap2015-network
+    depends_on:
+      - gallatin
+      - mysql
+  gallatin:
+    build: ./gallatin
+    env_file:
+      - .env
+    # environment:
+    #   - DATABASE_URL=mysql://root:asdf@mysql:3306/gallatin?schema=public
+    ports:
+      - 3030:3030
+    networks:
+      - ap2015-network
+    depends_on:
+      - ashland
+      - mysql
+  ashland:
+    build: ./ashland
+    networks:
+      - ap2015-network
+    depends_on:
+      - rabbitmq
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=asdf
+      - MYSQL_DATABASE=gallatin
+    ports:
+      - 3306:3306
+    volumes:
+      - ./seed:/docker-entrypoint-initdb.d
+    networks:
+      - ap2015-network
+  rabbitmq:
+    image: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+networks:
+  ap2015-network:
+    driver: bridge
