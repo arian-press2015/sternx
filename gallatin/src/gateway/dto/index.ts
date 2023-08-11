@@ -3,8 +3,8 @@ export class Task {
   readonly parentId?: number;
   readonly title: string;
   readonly description: string;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
+  readonly createdAt: number;
+  readonly updatedAt: number;
 }
 
 export class CreateTaskDto {
@@ -16,4 +16,8 @@ export class CreateTaskDto {
 export class FindAllDto {
   readonly offset?: number;
   readonly limit?: number;
+}
+
+export class TaskById {
+  readonly id: number;
 }

@@ -1,7 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 import { LogService } from '../log/log.service';
-import { CreateTaskDto, FindAllDto, Task } from './dto';
+import { CreateTaskDto, FindAllDto, Task, TaskById } from './dto';
 import { GatewayService } from './gateway.service';
 
 @Controller()
@@ -11,31 +12,40 @@ export class GatewayController {
     private readonly logService: LogService,
   ) {}
 
-  @GrpcMethod('create')
-  async createTask(data: CreateTaskDto, metadata: any): Promise<Task> {
+  @GrpcMethod('TaskService')
+  async create(data: CreateTaskDto, metadata: any): Promise<Task> {
     const result = await this.gatewayService.createTask(data);
     await this.logService.createTaskEvent(data);
     return result;
   }
 
-  @GrpcMethod('findOne')
-  async findOneTask(id: number, metadata: any): Promise<Task> {
-    const result = await this.gatewayService.findOneTask(id);
-    await this.logService.findOneTaskEvent(id);
+  @GrpcMethod('TaskService')
+  async findOne(taskById: TaskById, metadata: any): Promise<Task> {
+    const result = await this.gatewayService.findOneTask(taskById.id);
+    await this.logService.findOneTaskEvent(taskById.id);
     return result;
   }
 
-  @GrpcMethod('findAll')
-  async findAllTasks(data: FindAllDto, metadata: any): Promise<Task[]> {
-    const result = await this.gatewayService.findAllTasks(data);
+  @GrpcMethod('TaskService')
+  async findAll(data: FindAllDto, metadata: any): Promise<Observable<Task>> {
+    const repoStream = await this.gatewayService.findAllTasks(data);
+
+    const observable = new Observable<Task>((subscriber) => {
+      repoStream.map((value) => {
+        subscriber.next(value);
+      });
+      subscriber.complete();
+    });
+
     await this.logService.findAllTasksEvent(data);
-    return result;
+
+    return observable;
   }
 
-  @GrpcMethod('delete')
-  async deleteTask(id: number, metadata: any): Promise<boolean> {
-    const result = await this.gatewayService.deleteTask(id);
-    await this.logService.deleteTaskEvent(id);
+  @GrpcMethod('TaskService')
+  async delete(taskById: TaskById, metadata: any): Promise<Task> {
+    const result = await this.gatewayService.deleteTask(taskById.id);
+    await this.logService.deleteTaskEvent(taskById.id);
     return result;
   }
 }

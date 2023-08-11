@@ -32,8 +32,8 @@ describe('GatewayService', () => {
         parentId: null,
         title: 'hi',
         description: 'bye',
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
+        createdAt: expect.any(Number),
+        updatedAt: expect.any(Number),
       });
     });
   });
@@ -49,13 +49,13 @@ describe('GatewayService', () => {
         parentId: null,
         title: expect.any(String),
         description: expect.any(String),
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
+        createdAt: expect.any(Number),
+        updatedAt: expect.any(Number),
       });
     });
   });
 
-  describe('findALlTask', () => {
+  describe('findAllTask', () => {
     it('should be defined', () => {
       expect(service.findAllTasks).toBeDefined();
     });
@@ -67,8 +67,8 @@ describe('GatewayService', () => {
           parentId: null,
           title: expect.any(String),
           description: expect.any(String),
-          createdAt: expect.any(Date),
-          updatedAt: expect.any(Date),
+          createdAt: expect.any(Number),
+          updatedAt: expect.any(Number),
         },
       ]);
     });
@@ -80,7 +80,14 @@ describe('GatewayService', () => {
     });
 
     it('should delete one task', async () => {
-      expect(await service.deleteTask(2)).toEqual(true);
+      expect(await service.deleteTask(2)).toEqual({
+        id: expect.any(Number),
+        parentId: null,
+        title: expect.any(String),
+        description: expect.any(String),
+        createdAt: expect.any(Number),
+        updatedAt: expect.any(Number),
+      });
     });
   });
 });

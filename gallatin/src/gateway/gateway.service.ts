@@ -9,8 +9,8 @@ export class GatewayService {
       parentId: data.parentId ? data.parentId : null,
       title: data.title,
       description: data.description,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
     return task;
   }
@@ -21,8 +21,8 @@ export class GatewayService {
       parentId: null,
       title: 'my task',
       description: 'nothing!',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
     return task;
   }
@@ -34,14 +34,22 @@ export class GatewayService {
         parentId: null,
         title: 'my task',
         description: 'nothing!',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       },
     ];
     return tasks;
   }
 
   async deleteTask(id: number) {
-    return true;
+    const task: Task = {
+      id: 0,
+      parentId: null,
+      title: 'my task',
+      description: 'nothing!',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    return task;
   }
 }
