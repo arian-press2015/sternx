@@ -13,8 +13,7 @@ services:
     build: ./gallatin
     env_file:
       - .env
-    # environment:
-    #   - DATABASE_URL=mysql://root:asdf@mysql:3306/gallatin?schema=public
+    restart: always
     ports:
       - 3030:3030
     networks:
