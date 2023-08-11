@@ -1,55 +1,103 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto, FindAllDto, Task } from './dto';
 
 @Injectable()
 export class GatewayService {
+  constructor(private readonly prisma: PrismaService) {}
+
   async createTask(data: CreateTaskDto) {
-    const task: Task = {
-      id: 0,
-      parentId: data.parentId ? data.parentId : null,
-      title: data.title,
-      description: data.description,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+    const task = await this.prisma.tasks.create({
+      select: {
+        id: true,
+        parentId: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      data: data,
+    });
+
+    const { createdAt, updatedAt, ...info } = task;
+
+    return {
+      ...info,
+      createdAt: createdAt.getTime(),
+      updatedAt: updatedAt.getTime(),
     };
-    return task;
   }
 
   async findOneTask(id: number) {
-    const task: Task = {
-      id: 0,
-      parentId: null,
-      title: 'my task',
-      description: 'nothing!',
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+    const task = await this.prisma.tasks.findFirst({
+      select: {
+        id: true,
+        parentId: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const { createdAt, updatedAt, ...info } = task;
+
+    return {
+      ...info,
+      createdAt: createdAt.getTime(),
+      updatedAt: updatedAt.getTime(),
     };
-    return task;
   }
 
   async findAllTasks(data: FindAllDto) {
-    const tasks: Task[] = [
-      {
-        id: 0,
-        parentId: null,
-        title: 'my task',
-        description: 'nothing!',
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+    const task = await this.prisma.tasks.findMany({
+      select: {
+        id: true,
+        parentId: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
       },
-    ];
-    return tasks;
+      skip: data.offset,
+      take: data.limit,
+    });
+
+    return task.map((task) => {
+      const { createdAt, updatedAt, ...info } = task;
+
+      return {
+        ...info,
+        createdAt: createdAt.getTime(),
+        updatedAt: updatedAt.getTime(),
+      };
+    });
   }
 
   async deleteTask(id: number) {
-    const task: Task = {
-      id: 0,
-      parentId: null,
-      title: 'my task',
-      description: 'nothing!',
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+    const task = await this.prisma.tasks.delete({
+      select: {
+        id: true,
+        parentId: true,
+        title: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const { createdAt, updatedAt, ...info } = task;
+
+    return {
+      ...info,
+      createdAt: createdAt.getTime(),
+      updatedAt: updatedAt.getTime(),
     };
-    return task;
   }
 }

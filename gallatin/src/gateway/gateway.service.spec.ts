@@ -1,12 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
 import { GatewayService } from './gateway.service';
+
+const taskMock = {
+  id: expect.any(Number),
+  parentId: expect.any(Number),
+  title: expect.any(String),
+  description: expect.any(String),
+  createdAt: 1691764207000,
+  updatedAt: 1691764207000,
+};
+
+const sample = {
+  id: 3,
+  parentId: 0,
+  title: 'asdf',
+  description: 'fdsa',
+  createdAt: new Date(1691764207000),
+  updatedAt: new Date(1691764207000),
+};
+
+const PrismaServiceMock = {
+  tasks: {
+    create: jest.fn().mockReturnValue(sample),
+    findFirst: jest.fn().mockReturnValue(sample),
+    findMany: jest.fn().mockReturnValue([sample]),
+    delete: jest.fn().mockReturnValue(sample),
+  },
+};
 
 describe('GatewayService', () => {
   let service: GatewayService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GatewayService],
+      providers: [
+        GatewayService,
+        {
+          provide: PrismaService,
+          useValue: PrismaServiceMock,
+        },
+      ],
     }).compile();
 
     service = module.get<GatewayService>(GatewayService);
@@ -27,14 +61,7 @@ describe('GatewayService', () => {
           title: 'hi',
           description: 'bye',
         }),
-      ).toEqual({
-        id: expect.any(Number),
-        parentId: null,
-        title: 'hi',
-        description: 'bye',
-        createdAt: expect.any(Number),
-        updatedAt: expect.any(Number),
-      });
+      ).toEqual(taskMock);
     });
   });
 
@@ -44,14 +71,7 @@ describe('GatewayService', () => {
     });
 
     it('should return a task', async () => {
-      expect(await service.findOneTask(1)).toEqual({
-        id: expect.any(Number),
-        parentId: null,
-        title: expect.any(String),
-        description: expect.any(String),
-        createdAt: expect.any(Number),
-        updatedAt: expect.any(Number),
-      });
+      expect(await service.findOneTask(1)).toEqual(taskMock);
     });
   });
 
@@ -61,16 +81,7 @@ describe('GatewayService', () => {
     });
 
     it('should return all tasks', async () => {
-      expect(await service.findAllTasks({})).toEqual([
-        {
-          id: expect.any(Number),
-          parentId: null,
-          title: expect.any(String),
-          description: expect.any(String),
-          createdAt: expect.any(Number),
-          updatedAt: expect.any(Number),
-        },
-      ]);
+      expect(await service.findAllTasks({})).toEqual([taskMock]);
     });
   });
 
@@ -80,14 +91,7 @@ describe('GatewayService', () => {
     });
 
     it('should delete one task', async () => {
-      expect(await service.deleteTask(2)).toEqual({
-        id: expect.any(Number),
-        parentId: null,
-        title: expect.any(String),
-        description: expect.any(String),
-        createdAt: expect.any(Number),
-        updatedAt: expect.any(Number),
-      });
+      expect(await service.deleteTask(2)).toEqual(taskMock);
     });
   });
 });
