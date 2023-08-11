@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package task;
 
+import "google/protobuf/timestamp.proto";
+
 service TasksService {
   rpc FindOne (TaskById) returns (Task) {}
 }
@@ -15,6 +17,6 @@ message Task {
   int32 parentId = 2;
   string title = 3;
   string description = 4;
-  date createdAt = 5;
-  date updatedAt = 6;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
 }
